@@ -1,0 +1,17 @@
+.env
+.env.local
+.env.ai
+.claude/
+node_modules/
+dist/
+frontend/dist/
+frontend/node_modules/
+backend/dist/
+backend/node_modules/
+tmp/
+storage/workspaces/
+storage/uploads/
+storage/generated-images/
+storage/generated-docs/
+*.log
+.DS_Store

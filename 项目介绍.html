@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>帆软售前工作台 · 项目介绍</title>
+<style>
+  :root{
+    --blue:#3b6ef8; --blue-deep:#1a2744; --blue-light:#eaf0ff;
+    --green:#16a34a; --orange:#d97706; --red:#dc2626;
+    --text:#1a1d23; --text-2:#5b6472; --border:#e6e9ef; --bg:#f5f7fa;
+    --radius:14px; --shadow:0 6px 24px rgba(26,39,68,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    color:var(--text);background:var(--bg);line-height:1.7;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  a{color:var(--blue);text-decoration:none}
+
+  /* Hero */
+  .hero{background:linear-gradient(135deg,#1a2744 0%,#2c3e66 55%,#3b6ef8 140%);color:#fff;padding:72px 0 84px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-120px;top:-120px;width:380px;height:380px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,.12),transparent 70%)}
+  .badge-top{display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);
+    padding:5px 14px;border-radius:999px;font-size:13px;letter-spacing:.5px;margin-bottom:20px}
+  .hero h1{font-size:42px;font-weight:800;letter-spacing:-.5px;margin-bottom:14px}
+  .hero p.lead{font-size:18px;color:rgba(255,255,255,.86);max-width:680px}
+  .stack{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+  .stack span{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:6px 13px;border-radius:8px;font-size:13px}
+
+  /* sections */
+  section{padding:56px 0}
+  .eyebrow{color:var(--blue);font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+  h2.sec{font-size:27px;font-weight:800;margin-bottom:8px}
+  .sec-sub{color:var(--text-2);margin-bottom:32px;font-size:15px}
+
+  /* flow */
+  .flow{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+  .flow .step{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px 14px;text-align:center;position:relative}
+  .flow .step .n{width:30px;height:30px;border-radius:50%;background:var(--blue-light);color:var(--blue);font-weight:800;
+    display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:14px}
+  .flow .step .ic{font-size:24px;margin-bottom:6px}
+  .flow .step b{font-size:14px;display:block}
+  .flow .step small{color:var(--text-2);font-size:12px}
+
+  /* feature grid */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:22px;transition:.2s;box-shadow:var(--shadow)}
+  .card:hover{transform:translateY(-3px);border-color:var(--blue)}
+  .card .ic{font-size:26px;margin-bottom:12px}
+  .card h3{font-size:16px;margin-bottom:6px}
+  .card p{color:var(--text-2);font-size:13.5px}
+  .card .path{margin-top:10px;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--blue);
+    background:var(--blue-light);padding:3px 8px;border-radius:6px;display:inline-block}
+
+  /* status */
+  .status-wrap{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+  table{width:100%;border-collapse:collapse}
+  th,td{text-align:left;padding:14px 18px;font-size:14px;border-bottom:1px solid var(--border)}
+  th{background:#fafbfd;color:var(--text-2);font-weight:600;font-size:13px}
+  tr:last-child td{border-bottom:none}
+  .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700}
+  .pill.real{background:#e7f6ec;color:var(--green)}
+  .pill.mock{background:#fdf0e1;color:var(--orange)}
+  td code{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--text-2)}
+
+  /* highlights */
+  .hl{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .hl .item{background:#fff;border:1px solid var(--border);border-left:4px solid var(--blue);border-radius:10px;padding:18px 20px}
+  .hl .item h4{font-size:15px;margin-bottom:5px}
+  .hl .item p{color:var(--text-2);font-size:13.5px}
+
+  /* changelog */
+  .log{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:8px 24px;box-shadow:var(--shadow)}
+  .log .row{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+  .log .row:last-child{border-bottom:none}
+  .log .dot{width:9px;height:9px;border-radius:50%;background:var(--green);margin-top:8px;flex-shrink:0}
+  .log .row b{font-size:14.5px}
+  .log .row span{color:var(--text-2);font-size:13px}
+
+  footer{background:var(--blue-deep);color:rgba(255,255,255,.7);text-align:center;padding:32px 0;font-size:13px}
+  @media(max-width:860px){.flow{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.hl{grid-template-columns:1fr}.hero h1{font-size:32px}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <span class="badge-top">MVP · 帆软售前团队提效工具</span>
+    <h1>帆软售前工作台</h1>
+    <p class="lead">从客户需求文件到可交付方案的一站式 AI 工作台 —— 上传需求即解析，对话即调整，一键生成 Demo 驾驶舱大屏、匹配真实案例、产出方案并推送飞书文档。</p>
+    <div class="stack">
+      <span>React 18 + TypeScript</span><span>Vite</span><span>Node.js + Express</span>
+      <span>本地 JSON 存储</span><span>多模态大模型</span><span>生图大模型</span>
+      <span>帆软 KnowHow API</span><span>飞书 lark-cli</span>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Core Workflow</div>
+    <h2 class="sec">核心工作流</h2>
+    <p class="sec-sub">一条贯穿售前全流程的主线，每一步的产物自动流向下一步。</p>
+    <div class="flow">
+      <div class="step"><div class="n">1</div><div class="ic">🗂️</div><b>新建项目</b><small>独立空间隔离客户</small></div>
+      <div class="step"><div class="n">2</div><div class="ic">📎</div><b>上传解析</b><small>docx/pptx/xlsx/png/txt</small></div>
+      <div class="step"><div class="n">3</div><div class="ic">💬</div><b>AI 对话确认</b><small>记住文件内容</small></div>
+      <div class="step"><div class="n">4</div><div class="ic">📊</div><b>生成驾驶舱</b><small>4K 大屏图</small></div>
+      <div class="step"><div class="n">5</div><div class="ic">🎯</div><b>案例匹配</b><small>真实 KnowHow</small></div>
+      <div class="step"><div class="n">6</div><div class="ic">📄</div><b>方案 + 飞书</b><small>一键成文</small></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="wrap">
+    <div class="eyebrow">Modules</div>
+    <h2 class="sec">功能模块</h2>
+    <p class="sec-sub">七大模块覆盖售前方案制作全链路，右侧 AI 对话面板全局常驻。</p>
+    <div class="grid">
+      <div class="card"><div class="ic">📎</div><h3>文件上传与解析</h3><p>拖拽上传客户需求文件，所有类型统一交给对话模型解析：图片走视觉 OCR，表格/文档抽取后结构化提炼关键信息。</p><span class="path">uploadService.ts</span></div>
+      <div class="card"><div class="ic">💬</div><h3>全局 AI 对话</h3><p>解析结果自动注入对话上下文，AI「记住」客户文件，可基于真实需求调整提示词、方案与图表，改动需确认后生效。</p><span class="path">aiChatService.ts</span></div>
+      <div class="card"><div class="ic">📊</div><h3>Demo 驾驶舱</h3><p>从需求自动提炼行业/受众/指标/图表/预警，组装生图提示词，调用生图大模型输出 16:9 · 3840×2160 PNG，支持历史多版本切换与下载。</p><span class="path">dashboardService.ts</span></div>
+      <div class="card"><div class="ic">🎯</div><h3>案例匹配</h3><p>对接帆软 KnowHow 平台语义检索真实案例，综合行业+需求+文件内容召回，按文档去重排序，附原文链接。</p><span class="path">knowhowAdapter.ts</span></div>
+      <div class="card"><div class="ic">📄</div><h3>方案生成</h3><p>综合客户信息、文件与所选案例生成结构化方案章节，并产出反映客户业务架构的 Mermaid 架构图。</p><span class="path">solutionService.ts</span></div>
+      <div class="card"><div class="ic">🚀</div><h3>飞书文档</h3><p>通过 lark-cli 将方案标题、摘要、章节转为飞书 XML 一键创建为在线文档，返回可分享链接。</p><span class="path">feishuCliAdapter.ts</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Capability Status</div>
+    <h2 class="sec">能力接入状态</h2>
+    <p class="sec-sub">核心设计：每个外部能力都有 mock / real 双实现，按配置自动切换、失败自动回退。</p>
+    <div class="status-wrap">
+      <table>
+        <tr><th>能力</th><th>状态</th><th>说明</th><th>接入点</th></tr>
+        <tr><td>AI 对话</td><td><span class="pill real">真实</span></td><td>OpenAI 兼容对话模型</td><td><code>llmAdapter.chatCompletion</code></td></tr>
+        <tr><td>文件 / 图片解析</td><td><span class="pill real">真实</span></td><td>对话模型 + 视觉多模态</td><td><code>parseDocumentWithLLM</code></td></tr>
+        <tr><td>Demo 驾驶舱生图</td><td><span class="pill real">真实</span></td><td>生图大模型，4K PNG</td><td><code>imageModelAdapter</code></td></tr>
+        <tr><td>KnowHow 案例匹配</td><td><span class="pill real">真实</span></td><td>帆软 KnowHow 平台 API</td><td><code>knowhowAdapter</code></td></tr>
+        <tr><td>飞书文档创建</td><td><span class="pill real">真实</span></td><td>lark-cli docs +create</td><td><code>feishuCliAdapter</code></td></tr>
+        <tr><td>方案正文生成</td><td><span class="pill mock">Mock</span></td><td>结构化模板，待接真实文本模型</td><td><code>realTextCompletion</code></td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="wrap">
+    <div class="eyebrow">Architecture</div>
+    <h2 class="sec">架构亮点</h2>
+    <p class="sec-sub"></p>
+    <div class="hl">
+      <div class="item"><h4>🔌 适配器双实现模式</h4><p>对话、生图、KnowHow、飞书等外部能力统一抽象为 adapter，mock 与 real 并存，靠环境配置切换，真实调用失败时自动回退 mock，开发与演示零阻塞。</p></div>
+      <div class="item"><h4>🧠 AI 对话闭环</h4><p>用户输入 → AI 分析返回建议 + patch → 用户确认「应用修改」→ 写入项目数据。所有 AI 改动可控、可追溯。</p></div>
+      <div class="item"><h4>🗃️ 零依赖本地存储</h4><p>无数据库，每个项目独立目录存 JSON，上传文件、生成图片、方案快照分目录管理，开箱即跑。</p></div>
+      <div class="item"><h4>🖼️ 生图即产物</h4><p>驾驶舱最终交付物以生图模型输出为准，页面 KPI/图表作为提示词生成依据与调试信息，贴近真实售前演示效果。</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Recent Progress</div>
+    <h2 class="sec">近期完善</h2>
+    <p class="sec-sub">围绕「解析 → 对话 → 生成 → 案例 → 飞书」主线持续打磨。</p>
+    <div class="log">
+      <div class="row"><div class="dot"></div><div><b>Excel 上传支持</b> <span>— 新增 xlsx/xls，按扩展名兜底识别，解决浏览器 mime 不准导致的误拦。</span></div></div>
+      <div class="row"><div class="dot"></div><div><b>解析全面走对话模型</b> <span>— 图片视觉 OCR、表格/文档抽取后由对话模型结构化提炼。</span></div></div>
+      <div class="row"><div class="dot"></div><div><b>对话记住文件</b> <span>— 解析结果注入对话上下文，可基于客户真实需求调整驾驶舱与方案。</span></div></div>
+      <div class="row"><div class="dot"></div><div><b>驾驶舱历史图切换</b> <span>— 保留每次生成的图，支持上/下一张切换与单张下载。</span></div></div>
+      <div class="row"><div class="dot"></div><div><b>案例匹配接入真实 KnowHow</b> <span>— 语义检索帆软知识库真实案例，综合文件内容召回，附原文链接。</span></div></div>
+      <div class="row"><div class="dot"></div><div><b>飞书文档真实创建</b> <span>— 经 lark-cli 将方案一键推送为在线飞书文档。</span></div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    帆软售前工作台 MVP &nbsp;·&nbsp; 前端 http://localhost:5173 &nbsp;·&nbsp; 后端 http://localhost:3002
+    <br/>React + TypeScript + Vite &nbsp;/&nbsp; Node.js + Express
+  </div>
+</footer>
+
+</body>
+</html>
