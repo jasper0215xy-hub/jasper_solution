@@ -1,146 +1,218 @@
-# 帆软售前工作台 MVP
+# 帆软售前工作台
 
-基于 React + TypeScript + Vite（前端）和 Node.js + Express（后端）构建的售前工作台，帮助帆软售前团队快速完成客户方案制作。
+一个面向帆软售前场景的本地 Web 工作台，用于把客户需求文件转化为可讨论、可确认、可生成的售前素材。当前重点能力是：上传客户需求文件后，通过右侧 AI 对话确认 Demo 驾驶舱内容，再调用生图模型生成 16:9、4K PNG 驾驶舱图。
+
+项目采用 React + TypeScript + Vite 前端、Node.js + Express 后端。所有第三方能力都通过 adapter 封装，未配置真实 API 时自动使用 mock。
+
+## 能力定位
+
+本项目不是通用 BI 产品，也不是完整低代码平台，而是一个售前工作流编排工具：
+
+1. 统一管理客户项目空间。
+2. 上传并解析客户需求材料。
+3. 通过 AI 对话和用户确认，沉淀 Demo 驾驶舱生成内容。
+4. 将确认后的提示词传入 Demo 驾驶舱模块。
+5. 用户点击生成后，调用生图模型输出驾驶舱图。
+6. 后续扩展 KnowHow 案例匹配、方案生成、飞书文档输出。
+
+核心原则：AI 只提出建议，关键修改必须由用户确认后才写入项目数据。
+
+## 当前模块
+
+| 模块 | 路径 | 状态 | 说明 |
+| --- | --- | --- | --- |
+| 项目空间 | `/` | 可用 | 新建和管理客户项目 |
+| 文件上传 | `/workspace/:id/upload` | 可用 | 支持 `txt/docx/ppt/pptx/png` 上传，`txt` 可真实读取，其他格式暂为解析占位 |
+| AI 对话助手 | 右侧面板 | 可用 | 支持围绕当前项目进行对话，并返回可确认的修改建议 |
+| Demo 驾驶舱 | `/workspace/:id/dashboard` | 重点能力 | 读取 AI 确认后的 Prompt，点击后调用生图模型 |
+| 模型配置 | `/config` | 可用 | 查看对话模型、生图模型、KnowHow API 配置状态 |
+| 案例匹配 | `/workspace/:id/cases` | Mock | 当前使用本地 mock 案例库 |
+| 方案生成 | `/workspace/:id/solution` | Mock | 生成结构化方案和客户解决方案架构图 |
+| 飞书文档 | `/workspace/:id/feishu` | Mock | 预留飞书 CLI 文档生成入口 |
+
+## Demo 驾驶舱流程
+
+推荐使用路径：
+
+```text
+新建项目空间
+  -> 上传客户需求文件
+  -> 点击解析
+  -> 在右侧 AI 对话中确认驾驶舱内容
+  -> 点击 AI 建议里的“应用修改”
+  -> 进入 Demo驾驶舱页面
+  -> 检查自动传入的 Prompt
+  -> 点击“生成 Demo驾驶舱”
+  -> 查看 16:9、3840x2160、PNG 驾驶舱图
+```
+
+这个流程里，用户点击“应用修改”只会保存提示词草稿，不会直接调用生图模型。真正调用生图模型发生在 Demo 驾驶舱页面点击生成时。
 
 ## 快速启动
 
-### 1. 安装依赖
+### 环境要求
+
+- Node.js 18+
+- npm
+
+### 安装依赖
 
 ```bash
-# 在项目根目录
 npm run install:all
-# 等价于：
+```
+
+等价于：
+
+```bash
 npm install
 cd backend && npm install
 cd ../frontend && npm install
 ```
 
-### 2. 配置 AI 参数（可选）
+### 启动开发服务
+
+```bash
+npm run dev
+```
+
+默认地址：
+
+- 前端：http://localhost:5173
+- 后端：http://localhost:3002
+
+健康检查：
+
+```bash
+curl http://localhost:3002/api/health
+```
+
+### 类型检查
+
+```bash
+npm run typecheck
+```
+
+## API 配置
+
+本项目不会提交真实密钥。真实配置放在本地 `.env.ai`，该文件已被 `.gitignore` 忽略。
+
+复制模板：
 
 ```bash
 cp .env.ai.example .env.ai
-# 编辑 .env.ai，填写真实 AI 模型参数（不填则使用 Mock 模式）
 ```
 
-### 3. 启动
+### 对话模型
 
-```bash
-# 同时启动前端和后端
-npm run dev
-
-# 或分别启动
-npm run dev:backend   # 后端 http://localhost:3002
-npm run dev:frontend  # 前端 http://localhost:5173
-```
-
-浏览器打开 **http://localhost:5173** 即可使用。
-
----
-
-## 核心功能
-
-| 模块 | 路径 | 说明 |
-|------|------|------|
-| 项目空间 | `/` | 新建/管理项目，每个项目独立存储 |
-| 文件上传 | `/workspace/:id/upload` | 拖拽上传 docx/pptx/ppt/png/txt，一键解析 |
-| Demo驾驶舱 | `/workspace/:id/dashboard` | AI 确认内容后，根据提示词生成 16:9 4K PNG 驾驶舱图 |
-| 案例匹配 | `/workspace/:id/cases` | 根据行业和需求匹配帆软 KnowHow 案例 |
-| 方案生成 | `/workspace/:id/solution` | AI 综合生成结构化方案 + 架构图 |
-| 飞书文档 | `/workspace/:id/feishu` | 一键生成飞书文档 |
-| 模型配置 | `/config` | 引导配置对话模型、生图模型、KnowHow API |
-| AI 对话 | 右侧面板（全局常驻） | 任意模块调整内容，建议修改需用户确认才写入 |
-
----
-
-## 目录结构
-
-```
-jasper_solution/
-├── frontend/src/
-│   ├── pages/           # WorkspacePage, UploadPage, DemoDashboardPage, CaseMatchPage, SolutionPage, FeishuPage
-│   ├── components/
-│   │   ├── Layout/      # 左侧导航 + 主区域布局
-│   │   └── AIChat/      # 全局 AI 对话面板（右侧）
-│   └── api/             # 前端 API 调用层
-│
-├── backend/src/
-│   ├── routes/          # Express 路由
-│   ├── services/        # 业务逻辑
-│   ├── adapters/        # 第三方能力接入点（含 Mock）
-│   └── utils/           # promptBuilder, diagramBuilder, logger
-│
-└── storage/             # 本地 JSON 文件存储（不提交到 git）
-    ├── workspaces/      # 每个项目独立目录
-    ├── uploads/
-    ├── generated-images/
-    ├── generated-docs/
-    └── cases-cache/     # mock-cases.json（内置 8 个行业案例）
-```
-
----
-
-## 当前 Mock 状态
-
-| 能力 | 当前状态 | 真实接入位置 |
-|------|----------|-------------|
-| 文本生成（方案/对话） | ✅ Mock（结构化输出） | `backend/src/adapters/llmAdapter.ts` → `realTextCompletion` |
-| Demo驾驶舱生图 | ✅ Mock/真实模型可切换（3840x2160 PNG） | `backend/src/adapters/imageModelAdapter.ts` → `realImageGeneration` |
-| KnowHow 案例匹配 | ✅ Mock（8 个内置案例） | `backend/src/adapters/knowhowAdapter.ts` → 替换 `matchCases` |
-| 飞书文档生成 | ✅ Mock（模拟链接） | `backend/src/adapters/feishuCliAdapter.ts` → `realCreateDoc` |
-| docx/pptx 解析 | ✅ Mock（占位文本） | `backend/src/services/uploadService.ts` → 集成 mammoth/python-pptx |
-
-当前阶段先搭项目框架和配置入口。未填写 `.env.ai` 前，系统不会调用真实对话模型、生图模型或 KnowHow API。
-
-### 开启真实 AI 模型
-
-编辑 `.env.ai`（**不要提交到 git**）：
+用于右侧 AI 对话助手。
 
 ```env
-TEXT_MODEL_PROVIDER=                 # 可选；不填默认 openai-compatible
-TEXT_MODEL_API_KEY=your-text-model-key
-TEXT_MODEL_BASE_URL=https://api.openai.com/v1
-TEXT_MODEL_NAME=gpt-4o
-
-IMAGE_MODEL_PROVIDER=                # 可选；不填默认 openai-compatible
-IMAGE_MODEL_API_KEY=your-image-model-key
-IMAGE_MODEL_BASE_URL=https://api.openai.com/v1
-IMAGE_MODEL_NAME=dall-e-3
-
-AI_CHAT_MODEL_PROVIDER=              # 可选；不填默认 openai-compatible
 AI_CHAT_MODEL_API_KEY=your-chat-model-key
-AI_CHAT_MODEL_BASE_URL=https://api.openai.com/v1
-AI_CHAT_MODEL_NAME=gpt-4o
+AI_CHAT_MODEL_BASE_URL=https://your-chat-endpoint/v1
+AI_CHAT_MODEL_NAME=your-chat-model
+AI_CHAT_MODEL_PROVIDER=
+```
 
-KNOWHOW_API_PROVIDER=                # 可选
+`AI_CHAT_MODEL_PROVIDER` 可选。不填时默认按 OpenAI-compatible 接口适配。
+
+### 生图模型
+
+用于 Demo 驾驶舱图生成。固定规格：
+
+- 比例：16:9
+- 分辨率：3840x2160
+- 格式：PNG
+
+```env
+IMAGE_MODEL_API_KEY=your-image-model-key
+IMAGE_MODEL_BASE_URL=https://your-image-endpoint/v1
+IMAGE_MODEL_NAME=your-image-model
+IMAGE_MODEL_PROVIDER=
+```
+
+`IMAGE_MODEL_PROVIDER` 可选。不填时默认按 OpenAI-compatible `/images/generations` 接口适配。
+
+### KnowHow API
+
+用于后续接入帆软 KnowHow 案例库。
+
+```env
 KNOWHOW_API_KEY=your-knowhow-token
 KNOWHOW_API_BASE_URL=https://your-knowhow-host
 KNOWHOW_API_SEARCH_PATH=/api/search
 KNOWHOW_API_TOP_N=5
+KNOWHOW_API_PROVIDER=
 ```
 
-然后在对应 adapter 中实现 `real*` 函数。
+配置完成后重启后端，并打开：
 
-配置引导见：`docs/model-api-config-guide.md`，或打开 `http://localhost:5173/config` 查看配置状态。
-
----
-
-## Demo驾驶舱图生成
-
-当前优先完成的闭环：
-
-```
-新建项目空间 → 上传客户需求文件 → 解析文件 → 右侧 AI 对话确认驾驶舱内容 → 提示词自动传入 Demo驾驶舱 → 用户点击生成 → 展示生图模型输出的驾驶舱图
+```text
+http://localhost:5173/config
 ```
 
-使用方式：
+配置说明详见 [docs/model-api-config-guide.md](docs/model-api-config-guide.md)。
 
-1. 进入项目空间。
-2. 打开“文件上传”，上传客户需求 `txt` 文件并点击“解析”。
-3. 在右侧 AI 对话中说明并确认要生成的 Demo驾驶舱内容。
-4. 点击 AI 建议中的“应用修改”，系统会保存确认后的生图 Prompt。
-5. 进入左侧导航“Demo驾驶舱”，点击“生成 Demo驾驶舱”后，后端调用 `imageModelAdapter` 输出 16:9、3840x2160、PNG 图片。
+## 项目结构
 
-接口：
+```text
+jasper_solution/
+├── frontend/
+│   └── src/
+│       ├── pages/              # 页面：项目、上传、Demo驾驶舱、案例、方案、飞书、配置
+│       ├── components/         # 布局与 AI 对话面板
+│       ├── api/                # 前端 API 客户端
+│       └── styles/             # 全局样式
+├── backend/
+│   └── src/
+│       ├── routes/             # Express 路由
+│       ├── services/           # 业务服务
+│       ├── adapters/           # 模型、KnowHow、飞书等第三方适配器
+│       ├── types/              # 共享类型定义
+│       └── utils/              # 工具函数
+├── storage/
+│   └── cases-cache/            # mock KnowHow 案例库，可提交
+├── docs/                       # API、飞书、模型配置文档
+├── .env.example
+├── .env.ai.example
+└── README.md
+```
+
+本地运行数据不会提交：
+
+- `.env.ai`
+- `storage/workspaces/`
+- `storage/uploads/`
+- `storage/generated-images/`
+- `storage/generated-docs/`
+- `node_modules/`
+
+## 关键后端接口
+
+### 项目空间
+
+```http
+GET  /api/workspaces
+POST /api/workspaces
+GET  /api/workspaces/:id
+```
+
+### 文件上传
+
+```http
+GET  /api/workspaces/:workspaceId/uploads
+POST /api/workspaces/:workspaceId/uploads
+POST /api/workspaces/:workspaceId/uploads/:fileId/parse
+```
+
+### AI 对话
+
+```http
+GET  /api/workspaces/:workspaceId/ai-chat/messages
+POST /api/workspaces/:workspaceId/ai-chat/messages
+POST /api/workspaces/:workspaceId/ai-chat/apply
+```
+
+### Demo 驾驶舱
 
 ```http
 GET  /api/workspaces/:workspaceId/dashboard
@@ -149,48 +221,36 @@ PUT  /api/workspaces/:workspaceId/dashboard/prompt
 POST /api/workspaces/:workspaceId/dashboard/generate
 ```
 
-实现位置：
+完整接口说明见 [docs/api-contract.md](docs/api-contract.md)。
 
-- `backend/src/services/dashboardService.ts`：从客户需求文件提取行业、受众、指标、图表、预警和洞察，并组装生图 Prompt。
-- `backend/src/adapters/imageModelAdapter.ts`：统一生图模型入口。当前 mock 会生成本地 4K PNG；配置真实 `IMAGE_MODEL_*` 后可替换为真实生图模型。
-- `frontend/src/pages/DemoDashboardPage.tsx`：展示生图结果、Prompt 和结构化生成依据。
+## Adapter 说明
 
-注意：驾驶舱最终产物以生图模型输出图片为准，页面中的 KPI/图表结构只是生图 Prompt 的生成依据和调试信息。
+所有外部能力都集中在 `backend/src/adapters/`：
 
----
+| Adapter | 文件 | 说明 |
+| --- | --- | --- |
+| 对话/文本模型 | `llmAdapter.ts` | OpenAI-compatible chat completions，未配置时 mock |
+| 生图模型 | `imageModelAdapter.ts` | OpenAI-compatible image generations，未配置时生成本地 4K PNG mock 图 |
+| KnowHow 案例库 | `knowhowAdapter.ts` | 当前本地 mock，后续替换为真实 API |
+| 飞书文档 | `feishuCliAdapter.ts` | 当前 mock，后续接飞书 CLI |
 
-## AI 对话闭环机制
+## 开发脚本
 
-所有 AI 修改建议遵循以下流程：
-
+```bash
+npm run dev                # 同时启动前后端
+npm run dev:frontend       # 仅启动前端
+npm run dev:backend        # 仅启动后端
+npm run typecheck          # 前后端 TypeScript 检查
+npm run build              # 前后端构建
 ```
-用户输入 → AI 分析 → 返回建议 + patch 对象
-                              ↓
-                    用户点击"应用修改"
-                              ↓
-              POST /ai-chat/apply → 写入项目数据
-```
 
-AI 回复分三种类型：
-- `explanation`：普通解释，不涉及修改
-- `suggestion`：包含 patch 的修改建议，需用户确认
-- `patch`：直接可应用的补丁（预留）
+## 当前限制
 
----
+- `docx/ppt/pptx/png` 解析仍是占位逻辑，`txt` 解析可用。
+- KnowHow API、飞书文档当前为 mock。
+- Demo 驾驶舱真实生图依赖你本地 `.env.ai` 配置。
+- 生图模型的 3840x2160 支持取决于实际模型服务商；adapter 已按固定规格发起请求。
 
-## 架构图说明
+## 安全说明
 
-方案生成的架构图来自 `diagramBuilder.ts`，图中内容反映**客户的业务/技术架构**，包含：
-- 客户现有业务系统（ERP/MES/CRM 等）
-- 帆软产品层（FineReport/FineBI/FineDataLink）
-- 数据源层、数据处理链路
-- 业务用户访问路径
-- 权限与组织体系
-
-**不是本项目自身的工程架构图。**
-
----
-
-## 飞书 CLI 接入
-
-见 `docs/feishu-cli-guide.md`
+不要提交真实 API Key。仓库只提交 `.env.ai.example`，本地 `.env.ai` 已忽略。
